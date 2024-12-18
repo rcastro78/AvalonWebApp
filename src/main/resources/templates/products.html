@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Avalon Group</title>
+    <link rel="stylesheet" href="/css/mantenimiento.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <style>
+        /* Estilos básicos para el modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .edit-btn-img {
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-cancel {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-add {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination-container ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+        }
+
+        .pagination-container ul li {
+            margin: 0 5px;
+        }
+
+        .pagination-container ul li a {
+            display: block;
+            width: 40px; /* Tamaño cuadrado */
+            height: 40px;
+            background-color: #4CAF50; /* Verde */
+            color: white;
+            text-align: center;
+            line-height: 40px; /* Alinear texto verticalmente */
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+        }
+
+        .pagination-container ul li a:hover {
+            background-color: #45a049; /* Verde más oscuro */
+        }
+
+        .pagination-container ul li.disabled a {
+            background-color: gray; /* Botón deshabilitado */
+            pointer-events: none;
+        }
+
+        .pagination-container ul li.active a {
+            background-color: #2e7d32; /* Verde oscuro para activo */
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Estilos del formulario */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 1em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="number"], input[type="checkbox"] {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+        }
+
+        .checkbox-label {
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .btn-submit {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #f44336;
+            color: white;
+        }
+
+        /* Alineación del formulario */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group input {
+            width: 100%;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+        }
+
+        .modal-content {
+            max-width: 500px;
+            width: 90%;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Products for <span th:text="${param.brandName}"></span></h1>
+    <div style="text-align: center;">
+        <img th:src="@{${brand.brandLogoUrl}}" alt="Brand Logo" style="width: 240px; height: 240px; object-fit: contain;"/>
+    </div>
+    <div>
+        <a th:href="@{/api/brands}" class="btn-back">Back to Brands</a>
+    </div>
+    <!-- Botón para agregar un nuevo producto -->
+    <button class="btn-add" onclick="openAddModal()">Add New Product</button>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Item Name</th>
+            <th colspan="2">UPC</th>
+            <th colspan="4">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${productPage.content}">
+            <td th:text="${product.idItem}"></td>
+            <td th:text="${product.itemName}"></td>
+            <td th:text="${product.upc}"></td>
+            <td>
+                <img th:src="'https://www.barcodesinc.com/generator/image.php?code=' + ${product.upc} + '&type=C128B&width=200&height=100&xres=1&font=3'" alt="Barcode" style="width: 240px; height: 240px; object-fit: contain;" />
+            </td>
+            <td>
+                <img class="edit-btn-img"
+                     th:src="@{/images/truck.png}"
+                     alt="Distributors"
+                     onclick="" />
+            </td>
+
+            <td>
+                <img class="edit-btn-img"
+                     th:src="@{/images/pdf.png}"
+                     alt="Print"
+                     onclick="" />
+            </td>
+
+            <td>
+                <img class="edit-btn-img"
+                     th:src="@{/images/edit.png}"
+                     alt="Edit"
+                     onclick="" />
+            </td>
+
+            <td>
+                <img class="edit-btn-img"
+                     th:src="@{/images/thrash.png}"
+                     alt="Delete"
+                     onclick="" />
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div>
+        <nav aria-label="Page navigation" class="pagination-container">
+            <ul>
+                <li th:classappend="${productPage.hasPrevious()} ? '' : 'disabled'">
+                    <a th:href="@{/products(idBrand=${idBrand}, page=${productPage.number - 1})}"
+                       th:if="${productPage.hasPrevious()}">
+                        Prev.
+                    </a>
+                </li>
+                <li th:each="page : ${#numbers.sequence(0, productPage.totalPages - 1)}"
+                    th:classappend="${page == productPage.number} ? 'active' : ''">
+                    <a th:href="@{/products(idBrand=${idBrand}, page=${page})}" th:text="${page + 1}"></a>
+                </li>
+                <li th:classappend="${productPage.hasNext()} ? '' : 'disabled'">
+                    <a th:href="@{/products(idBrand=${idBrand}, page=${productPage.number + 1})}"
+                       th:if="${productPage.hasNext()}">
+                        Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+
+<div id="addProductModal" class="modal">
+    <div class="modal-content">
+        <h2>Add New Product</h2>
+        <!-- http://localhost:8080/api/products/14/products/create-->
+        <form th:action="@{/api/products/{idBrand}/products/create(idBrand=${brand.idBrand})}" method="post">
+            <!-- idBrand - campo fijo -->
+            <div class="form-group">
+                <label for="idBrand">Brand ID</label>
+                <input type="text" id="idBrand" name="idBrand" th:value="${brand.idBrand}" readonly />
+            </div>
+
+            <div class="form-group">
+                <label for="brandName">Brand Name</label>
+                <input type="text" id="brandName" name="idBrand" th:value="${brand.brandName}" readonly />
+            </div>
+
+            <!-- idItem -->
+            <div class="form-group">
+                <label for="idItem">Item ID</label>
+                <input type="text" id="idItem" name="idItem" required />
+            </div>
+
+            <div class="form-group">
+                <label for="qty">Quantity</label>
+                <input type="text" id="qty" name="qty" required />
+            </div>
+
+            <!-- idUnit -->
+            <div class="form-group">
+                <label for="idUnit">Unit</label>
+                <input type="number" id="idUnit" name="idUnit" required />
+            </div>
+
+            <!-- itemName -->
+            <div class="form-group">
+                <label for="itemName">Item Name</label>
+                <input type="text" id="itemName" name="itemName" required />
+            </div>
+
+            <!-- UPC -->
+            <div class="form-group">
+                <label for="upc">UPC</label>
+                <input type="text" id="upc" name="upc" />
+            </div>
+
+            <!-- Vegan -->
+            <div class="form-group">
+                <label for="vegan">
+                    <input type="checkbox" id="vegan" name="vegan" value="1" />
+                    Vegan
+                </label>
+            </div>
+
+            <!-- Plant Based -->
+            <div class="form-group">
+                <label for="plantBased">
+                    <input type="checkbox" id="plantBased" name="plantBased" value="1" />
+                    Plant-Based
+                </label>
+            </div>
+
+            <button type="submit" class="btn-submit">Submit</button>
+            <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Función para abrir el modal
+    function openAddModal() {
+        document.getElementById('addProductModal').style.display = 'flex';
+    }
+
+    // Función para cerrar el modal
+    function closeAddModal() {
+        document.getElementById('addProductModal').style.display = 'none';
+    }
+</script>
+</body>
+</html>

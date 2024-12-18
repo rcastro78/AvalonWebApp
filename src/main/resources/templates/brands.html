@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brands - Avalon Group</title>
+    <link rel="stylesheet" href="/css/mantenimiento.css">
+    <style>
+        /* Estilos básicos para el modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .edit-btn-img {
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-cancel {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-add {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+         .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination-container ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+    }
+
+    .pagination-container ul li {
+        margin: 0 5px;
+    }
+
+    .pagination-container ul li a {
+        display: block;
+        width: 40px; /* Tamaño cuadrado */
+        height: 40px;
+        background-color: #4CAF50; /* Verde */
+        color: white;
+        text-align: center;
+        line-height: 40px; /* Alinear texto verticalmente */
+        text-decoration: none;
+        font-size: 14px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s;
+    }
+
+    .pagination-container ul li a:hover {
+        background-color: #45a049; /* Verde más oscuro */
+    }
+
+    .pagination-container ul li.disabled a {
+        background-color: gray; /* Botón deshabilitado */
+        pointer-events: none;
+    }
+
+    .pagination-container ul li.active a {
+        background-color: #2e7d32; /* Verde oscuro para activo */
+    }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Brands - Avalon Group</h1>
+
+    <!-- Botón para agregar una nueva marca -->
+    <button class="btn-add" onclick="openAddModal()">Add New Brand</button>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Brand Name</th>
+            <th>Brand Logo</th>
+            <th colspan="4">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Iterar sobre la lista de marcas -->
+        <tr th:each="brand : ${brandPage.content}">
+            <td th:text="${brand.idBrand}"></td>
+            <td th:text="${brand.brandName}"></td>
+            <td>
+                <img th:src="@{${brand.brandLogoUrl}}" alt="Logo de [[${brand.brandName}]]" width="50" height="50">
+            </td>
+
+
+
+
+            <td>
+                <img class="edit-btn-img"
+                     th:src="@{/images/box.png}"
+                     alt="Products"
+                     th:data-id="${brand.idBrand}"
+                     th:data-name="${brand.brandName}"
+                     onclick="redirectToProductPage(this)" />
+            </td>
+
+            <td>
+                <!-- Usar atributos data-* para almacenar los datos de la marca -->
+                <img class="edit-btn-img"
+                     th:data-id="${brand.idBrand}"
+                     th:data-name="${brand.brandName}"
+                     th:data-logo-url="${brand.brandLogoUrl}"
+                     th:src="@{/images/edit.png}"
+                     alt="Editar"
+                     onclick="openEditModal(this)" />
+            </td>
+
+            <td>
+                <!-- Usar atributos data-* para almacenar los datos de la marca -->
+                <img class="edit-btn-img"
+                     th:src="@{/images/thrash.png}"
+                     alt="Logical delete (status=0)"
+                     onclick="" />
+            </td>
+
+
+        </tr>
+        </tbody>
+    </table>
+
+    <div>
+        <nav aria-label="Page navigation" class="pagination-container">
+            <ul>
+                <li th:classappend="${brandPage.hasPrevious()} ? '' : 'disabled'">
+                    <a th:href="@{/api/brands(page=${brandPage.number - 1})}" aria-label="Previous" th:if="${brandPage.hasPrevious()}">
+                        Prev.
+                    </a>
+                </li>
+                <li th:each="page : ${#numbers.sequence(0, brandPage.totalPages - 1)}"
+                    th:classappend="${page == brandPage.number} ? 'active' : ''">
+                    <a th:href="@{/api/brands(page=${page})}" th:text="${page + 1}"></a>
+                </li>
+                <li th:classappend="${brandPage.hasNext()} ? '' : 'disabled'">
+                    <a th:href="@{/api/brands(page=${brandPage.number + 1})}" aria-label="Next" th:if="${brandPage.hasNext()}">
+                        Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Modal para editar -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2>Edit Brand</h2>
+            <form th:action="@{/api/brands/update}" method="POST">
+                <input type="hidden" name="_method" value="PUT">
+                <input type="hidden" id="brandId" name="idBrand" value="">
+
+                <label for="brandName">Brand Name</label>
+                <input type="text" id="brandName" name="brandName" required>
+                <br/>
+                <label for="brandLogoUrl">Logo</label>
+                <input type="url" id="brandLogoUrl" name="brandLogoUrl" required>
+
+                <button type="submit" class="btn-submit">Save</button>
+                <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para agregar -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <h2>Add New Brand</h2>
+            <form th:action="@{/api/brands/create}" method="POST">
+                <label for="newBrandName">Brand Name</label>
+                <input type="text" id="newBrandName" name="brandName" required>
+                <br/>
+                <label for="newBrandLogoUrl">Logo</label>
+                <input type="url" id="newBrandLogoUrl" name="brandLogoUrl" required>
+
+                <button type="submit" class="btn-submit">Add</button>
+                <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Función para abrir el modal de edición
+    function openEditModal(button) {
+        var id = button.getAttribute('data-id');
+        var name = button.getAttribute('data-name');
+        var logoUrl = button.getAttribute('data-logo-url');
+
+        document.getElementById('editModal').style.display = 'flex';
+        document.getElementById('brandId').value = id;
+        document.getElementById('brandName').value = name;
+        document.getElementById('brandLogoUrl').value = logoUrl;
+    }
+
+    // Función para cerrar el modal de edición
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    // Función para abrir el modal de agregar
+    function openAddModal() {
+        document.getElementById('addModal').style.display = 'flex';
+    }
+
+    // Función para cerrar el modal de agregar
+    function closeAddModal() {
+        document.getElementById('addModal').style.display = 'none';
+    }
+</script>
+
+
+<script>
+    function redirectToProductPage(element) {
+        var brandId = element.getAttribute('data-id');
+        var brandName = encodeURIComponent(element.getAttribute('data-name'));
+        window.location.href = '/api/products/' + brandId + '/products?brandName=' + brandName;
+    }
+</script>
+</body>
+</html>
