@@ -4,6 +4,7 @@ import com.avalongroup.Inventory.model.Brand;
 import com.avalongroup.Inventory.model.Product;
 import com.avalongroup.Inventory.service.BrandService;
 import com.avalongroup.Inventory.service.ProductService;
+import com.avalongroup.Inventory.service.UnitService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,17 @@ import java.util.Optional;
 @RequestMapping("/api/products")
 public class ProductController {
 
+    //Si necesito datos de varias tablas o vistas las llamo via los servicios,
+    //luego se pasa al constructor y a la funcion de la pagina via model.addAttribute(nombre, servicio.funcion)
+
     private final ProductService productService;
     private final BrandService brandService;
-    public ProductController(ProductService productService, BrandService brandService) {
+    private final UnitService unitService;
+    public ProductController(ProductService productService, BrandService brandService,
+                             UnitService unitService) {
         this.productService = productService;
         this.brandService = brandService;
+        this.unitService = unitService;
     }
 
     // Obtener productos por idBrand con paginación
@@ -65,7 +72,9 @@ public class ProductController {
     public String createProduct(@PathVariable Integer idBrand, @ModelAttribute Product product,
                                 @RequestParam(defaultValue = "0") int page,
                                 @RequestParam(defaultValue = "0") Integer vegan,
-                                @RequestParam(defaultValue = "0") Integer plantBased) {
+                                @RequestParam(defaultValue = "0") Integer plantBased,
+                                Model model) {
+        model.addAttribute("units",unitService.getAllUnits());
         product.setIdBrand(idBrand); // Asocia la marca al producto
         product.setVegan(vegan); //Valor por defecto
         product.setPlantBased(plantBased); //Valor por defecto

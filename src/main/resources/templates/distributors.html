@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributors - Avalon Group</title>
+    <link rel="stylesheet" href="/css/mantenimiento.css">
+    <style>
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group input {
+            width: 100%;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+        }
+
+        /* Estilos básicos para el modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .edit-btn-img {
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-cancel {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-add {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination-container ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+        }
+
+        .pagination-container ul li {
+            margin: 0 5px;
+        }
+
+        .pagination-container ul li a {
+            display: block;
+            width: 40px;
+            height: 40px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            line-height: 40px;
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+        }
+
+        .pagination-container ul li a:hover {
+            background-color: #45a049;
+        }
+
+        .pagination-container ul li.disabled a {
+            background-color: gray;
+            pointer-events: none;
+        }
+
+        .pagination-container ul li.active a {
+            background-color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Distributors - Avalon Group</h1>
+
+    <!-- Botón para agregar un nuevo distribuidor -->
+    <button class="btn-add" onclick="openAddModal()">Add New Distributor</button>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Distributor Name</th>
+            <th>Contact Info</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th colspan="3">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Iterar sobre la lista de distribuidores -->
+        <tr th:each="distributor : ${distributorPage.content}">
+            <td th:text="${distributor.idDistributor}"></td>
+            <td th:text="${distributor.distributorName}"></td>
+            <td th:text="${distributor.contact}"></td>
+            <td th:text="${distributor.distributorEmail}"></td>
+            <td th:text="${distributor.distributorPhone}"></td>
+
+            <td>
+                <img class="edit-btn-img"
+                     th:src="@{/images/food.png}"
+                     alt="Logical delete (status=0)"
+                     onclick="" />
+            </td>
+
+            <td>
+                <img class="edit-btn-img"
+                     th:src="@{/images/edit.png}"
+                     alt="Editar"
+                     th:data-id="${distributor.idDistributor}"
+                     th:data-name="${distributor.distributorName}"
+                     th:data-contact="${distributor.contact}"
+                     th:data-email="${distributor.distributorEmail}"
+                     th:data-phone="${distributor.distributorPhone}"
+                     onclick="openEditModal(this)" />
+            </td>
+
+            <td>
+                <img class="edit-btn-img"
+                     th:src="@{/images/thrash.png}"
+                     alt="Logical delete (status=0)"
+                     onclick="" />
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div>
+        <nav aria-label="Page navigation" class="pagination-container">
+            <ul>
+                <li th:classappend="${distributorPage.hasPrevious()} ? '' : 'disabled'">
+                    <a th:href="@{/api/distributors(page=${distributorPage.number - 1})}" aria-label="Previous" th:if="${distributorPage.hasPrevious()}">
+                        Prev.
+                    </a>
+                </li>
+                <li th:each="page : ${#numbers.sequence(0, distributorPage.totalPages - 1)}"
+                    th:classappend="${page == distributorPage.number} ? 'active' : ''">
+                    <a th:href="@{/api/distributors(page=${page})}" th:text="${page + 1}"></a>
+                </li>
+                <li th:classappend="${distributorPage.hasNext()} ? '' : 'disabled'">
+                    <a th:href="@{/api/distributors(page=${distributorPage.number + 1})}" aria-label="Next" th:if="${distributorPage.hasNext()}">
+                        Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Modal para editar -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2>Edit Distributor</h2>
+            <form th:action="@{/api/distributors/update}" method="POST">
+                <input type="hidden" name="_method" value="PUT">
+                <input type="hidden" id="distributorId" name="idDistributor" value="">
+                <div class="form-group">
+                <label for="distributorName">Distributor Name</label>
+                <input type="text" id="distributorName" name="distributorName" required>
+                </div>
+                <div class="form-group">
+                <label for="distributorPhone">Phone</label>
+                <input type="text" id="distributorPhone" name="distributorPhone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="contactInfo">Contact Info</label>
+                    <input type="text" id="contactInfo" name="contactInfo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="distributorEmail">Email</label>
+                    <input type="text" id="distributorEmail" name="distributorEmail" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Save</button>
+                <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para agregar -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <h2>Add New Distributor</h2>
+            <form th:action="@{/api/distributors/create}" method="POST">
+                <div class="form-group">
+                    <label for="newDistributorName">Distributor Name</label>
+                    <input type="text" id="newDistributorName" name="distributorName" required>
+
+                </div>
+                <div class="form-group">
+                <label for="newContactInfo">Contact Info</label>
+                <input type="text" id="newContactInfo" name="contactInfo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="newDistributorEmail">Email</label>
+                    <input type="text" id="newDistributorEmail" name="distributorEmail" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="newContactPhoneInfo">Phone</label>
+                    <input type="text" id="newContactPhoneInfo" name="contactPhoneInfo" required>
+                </div>
+
+
+                <button type="submit" class="btn-submit">Add</button>
+                <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Función para abrir el modal de edición
+    function openEditModal(button) {
+        var id = button.getAttribute('data-id');
+        var name = button.getAttribute('data-name');
+        var contact = button.getAttribute('data-contact');
+        var email = button.getAttribute('data-email');
+        var phone = button.getAttribute('data-phone');
+        document.getElementById('editModal').style.display = 'flex';
+        document.getElementById('distributorId').value = id;
+        document.getElementById('distributorName').value = name;
+        document.getElementById('contactInfo').value = contact;
+        document.getElementById('distributorEmail').value = email;
+        document.getElementById('distributorPhone').value = phone;
+    }
+
+    // Función para cerrar el modal de edición
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    // Función para abrir el modal de agregar
+    function openAddModal() {
+        document.getElementById('addModal').style.display = 'flex';
+    }
+
+    // Función para cerrar el modal de agregar
+    function closeAddModal() {
+        document.getElementById('addModal').style.display = 'none';
+    }
+
+</script>
+</body>
+</html>

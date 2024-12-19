@@ -325,7 +325,9 @@
             <!-- idUnit -->
             <div class="form-group">
                 <label for="idUnit">Unit</label>
-                <input type="number" id="idUnit" name="idUnit" required />
+                <select id="idUnit" name="idUnit" required>
+                    <!-- Aquí se agregarán las opciones dinámicamente -->
+                </select>
             </div>
 
             <!-- itemName -->
@@ -372,6 +374,23 @@
     function closeAddModal() {
         document.getElementById('addProductModal').style.display = 'none';
     }
+
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/api/units/dropdown")
+            .then(response => response.json())
+            .then(units => {
+                const dropdown = document.getElementById("idUnit");
+                units.forEach(unit => {
+                    const option = document.createElement("option");
+                    option.value = unit.idUnit; // El valor será el ID de la unidad
+                    option.textContent = unit.unitName; // El texto será el nombre de la unidad
+                    dropdown.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error al cargar las unidades:", error));
+    });
 </script>
 </body>
 </html>
