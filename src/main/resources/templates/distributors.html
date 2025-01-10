@@ -166,10 +166,20 @@
             </td>
 
             <td>
-                <img class="edit-btn-img"
-                     th:src="@{/images/thrash.png}"
-                     alt="Logical delete (status=0)"
-                     onclick="" />
+                <form th:action="@{/api/distributors/delete}" method="post">
+                    <input type="hidden" name="idDistributor" th:value="${distributor.idDistributor}" />
+                    <input type="hidden" name="distributorName" th:value="${distributor.distributorName}" />
+                    <input type="hidden" name="distributorEmail" th:value="${distributor.distributorEmail}" />
+                    <input type="hidden" name="distributorPhone" th:value="${distributor.distributorPhone}" />
+                    <input type="hidden" name="contact" th:value="${distributor.contact}" />
+                    <input type="hidden" name="page" th:value="${currentPage}" />
+
+                    <button type="submit" class="delete-btn">
+                        <img class="edit-btn-img"
+                             th:src="@{/images/thrash.png}"
+                             alt="Logical delete (status=0)" />
+                    </button>
+                </form>
             </td>
         </tr>
         </tbody>
@@ -213,14 +223,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="contactInfo">Contact Info</label>
-                    <input type="text" id="contactInfo" name="contactInfo" required>
+                    <label for="contact">Contact Info</label>
+                    <input type="text" id="contact" name="contact" required>
                 </div>
 
                 <div class="form-group">
                     <label for="distributorEmail">Email</label>
                     <input type="text" id="distributorEmail" name="distributorEmail" required>
                 </div>
+
+
 
                 <button type="submit" class="btn-submit">Save</button>
                 <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
@@ -240,7 +252,7 @@
                 </div>
                 <div class="form-group">
                 <label for="newContactInfo">Contact Info</label>
-                <input type="text" id="newContactInfo" name="contactInfo" required>
+                <input type="text" id="newContactInfo" name="contact" required>
                 </div>
 
                 <div class="form-group">
@@ -250,7 +262,7 @@
 
                 <div class="form-group">
                     <label for="newContactPhoneInfo">Phone</label>
-                    <input type="text" id="newContactPhoneInfo" name="contactPhoneInfo" required>
+                    <input type="text" id="newContactPhoneInfo" name="distributorPhone" required>
                 </div>
 
 
@@ -269,12 +281,14 @@
         var contact = button.getAttribute('data-contact');
         var email = button.getAttribute('data-email');
         var phone = button.getAttribute('data-phone');
+
         document.getElementById('editModal').style.display = 'flex';
         document.getElementById('distributorId').value = id;
         document.getElementById('distributorName').value = name;
-        document.getElementById('contactInfo').value = contact;
+        document.getElementById('contact').value = contact;
         document.getElementById('distributorEmail').value = email;
         document.getElementById('distributorPhone').value = phone;
+
     }
 
     // Función para cerrar el modal de edición

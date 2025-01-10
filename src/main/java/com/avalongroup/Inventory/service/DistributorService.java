@@ -5,7 +5,7 @@ import com.avalongroup.Inventory.repository.DistributorRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.jpa.domain.Specification;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +19,10 @@ public class DistributorService {
     }
 
     public Page<Distributor> getDistributors(Pageable pageable) {
-        return distributorRepository.findAll(pageable);
+        Specification<Distributor> spec = (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("status"), true);
+
+        return distributorRepository.findAll(spec,pageable);
     }
 
     public List<Distributor> getAllDistributors() {

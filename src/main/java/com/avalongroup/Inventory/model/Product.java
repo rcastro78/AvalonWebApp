@@ -59,7 +59,7 @@ public class Product {
         this.idBrand = idBrand;
     }
 
-    public Integer getUnit() {
+    public Integer getIdUnit() {
         return idUnit;
     }
 

@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/api/distributors")
@@ -52,17 +53,41 @@ public class DistributorController {
         return "redirect:/api/distributors?page=" + page;
     }
 
+    @PostMapping("/delete")
+    public String deleteDistributor(@RequestParam("idDistributor") Integer id,
+                                    @RequestParam("distributorName") String distributorName,
+                                    @RequestParam("distributorEmail") String distributorEmail,
+                                    @RequestParam("distributorPhone") String distributorPhone,
+                                    @RequestParam("contact") String contact,
+                                    @RequestParam(defaultValue = "0") int page) {
+
+
+
+        // Llamada al servicio para actualizar el distribuidor
+        Distributor updatedDistributor = new Distributor(id, distributorName, distributorEmail, distributorPhone, contact,
+                false);
+        distributorService.updateDistributor(id, updatedDistributor);
+
+        // Redirigir a la misma página para cargar los distribuidores actualizados
+        return "redirect:/api/distributors?page=" + page;
+    }
+
+
     @PostMapping("/update")
     public String updateDistributor(@RequestParam("idDistributor") Integer id,
                                     @RequestParam("distributorName") String distributorName,
                                     @RequestParam("distributorEmail") String distributorEmail,
                                     @RequestParam("distributorPhone") String distributorPhone,
                                     @RequestParam("contact") String contact,
-                                    @RequestParam("status") Boolean status,
                                     @RequestParam(defaultValue = "0") int page) {
 
+
+        Optional<Distributor> existingDistributor = distributorService.getDistributorById(id);
+        boolean existingStatus = existingDistributor.get().getStatus();
+
         // Llamada al servicio para actualizar el distribuidor
-        Distributor updatedDistributor = new Distributor(id, distributorName, distributorEmail, distributorPhone, contact, status);
+        Distributor updatedDistributor = new Distributor(id, distributorName, distributorEmail, distributorPhone, contact,
+                existingStatus);
         distributorService.updateDistributor(id, updatedDistributor);
 
         // Redirigir a la misma página para cargar los distribuidores actualizados

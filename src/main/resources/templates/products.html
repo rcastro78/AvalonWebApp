@@ -225,9 +225,12 @@
     <table>
         <thead>
         <tr>
-            <th>ID</th>
+            <th>Product Code</th>
             <th>Item Name</th>
+            <th>Vegan</th>
+            <th>Plant Based</th>
             <th colspan="2">UPC</th>
+
             <th colspan="4">Actions</th>
         </tr>
         </thead>
@@ -235,7 +238,14 @@
         <tr th:each="product : ${productPage.content}">
             <td th:text="${product.idItem}"></td>
             <td th:text="${product.itemName}"></td>
+            <td>
+                <img th:if="${product.vegan == 1}" th:src="@{/images/vegan.png}" alt="Vegan" style="width: 60px; height: 60px;" />
+            </td>
+            <td>
+                <img th:if="${product.plantBased == 1}" th:src="@{/images/plant.png}" alt="Vegan" style="width: 60px; height: 60px;"/>
+            </td>
             <td th:text="${product.upc}"></td>
+
             <td>
                 <img th:src="'https://www.barcodesinc.com/generator/image.php?code=' + ${product.upc} + '&type=C128B&width=200&height=100&xres=1&font=3'" alt="Barcode" style="width: 240px; height: 240px; object-fit: contain;" />
             </td>
@@ -254,11 +264,23 @@
             </td>
 
             <td>
-                <img class="edit-btn-img"
-                     th:src="@{/images/edit.png}"
-                     alt="Edit"
-                     onclick="" />
+                <img
+                        class="edit-btn-img"
+                        th:src="@{/images/edit.png}"
+                        alt="Edit"
+                        onclick="openEditModal(this)"
+                        th:data-idItem="${product.idItem}"
+                        th:data-itemName="${product.itemName}"
+                        th:data-qty="${product.qty}"
+                        th:data-upc="${product.upc}"
+                        th:data-vegan="${product.vegan}"
+                        th:data-plantBased="${product.plantBased}"
+                        th:data-idUnit="${product.idUnit}"/>
             </td>
+
+
+
+
 
             <td>
                 <img class="edit-btn-img"
@@ -350,11 +372,12 @@
                 </label>
             </div>
 
+
             <!-- Plant Based -->
             <div class="form-group">
                 <label for="plantBased">
                     <input type="checkbox" id="plantBased" name="plantBased" value="1" />
-                    Plant-Based
+                    Plant Based
                 </label>
             </div>
 
@@ -364,7 +387,120 @@
     </div>
 </div>
 
+<!-- Modal para editar productos -->
+<div id="editProductModal" class="modal">
+    <div class="modal-content">
+        <h2>Edit Product</h2>
+        <form th:action="@{/api/products/update}" method="POST">
+            <!-- Campo oculto para enviar el método PUT -->
+            <input type="hidden" name="_method" value="PUT">
+            <!-- Campo oculto para almacenar el ID del producto -->
+            <input type="hidden" id="productIdItem" name="idItem" value="">
+
+            <!-- Nombre del producto -->
+            <div class="form-group">
+                <label for="productItemName">Product Name</label>
+                <input type="text" id="productItemName" name="productItemName" required>
+            </div>
+
+            <!-- Cantidad -->
+            <div class="form-group">
+                <label for="productQuantity">Quantity</label>
+                <input type="text" id="productQuantity" name="productQuantity" required>
+            </div>
+
+
+
+            <!-- Código UPC -->
+            <div class="form-group">
+                <label for="productUpc">UPC</label>
+                <input type="text" id="productUpc" name="productUpc" required>
+            </div>
+            <!--
+                        <div class="form-group">
+                            <label for="productIdUnit">Unit</label>
+                            <input type="text" id="productIdUnit" name="idUnit" required>
+                        </div>-->
+
+                        <!-- idUnit
+            <div class="form-group">
+                <label for="productIdUnit">Unit</label>
+                <select id="productIdUnit" name="idUnit" class="form-control" required>
+                    <option th:each="unit : ${units}"
+                            th:value="${unit.idUnit}"
+                            th:text="${unit.unitName}"
+                            th:selected="${unit.idUnit == product.idUnit}">
+                    </option>
+                </select>
+
+            </div>-->
+
+            <div class="form-group">
+                <label for="productIdUnit">Unit</label>
+                <select id="productIdUnit" name="idUnit" required>
+                    <option th:each="unit : ${units}"
+                            th:value="${unit.idUnit}"
+                            th:text="${unit.unitName}"
+                            th:selected="${unit.idUnit == product.idUnit}">
+                    </option>
+                </select>
+            </div>
+
+
+
+
+            <div class="form-group">
+                <label for="productVegan">
+                    <input type="checkbox" id="productVegan" name="vegan" value="1">
+                    Vegan
+                </label>
+                <input type="hidden" name="vegan" value="0">
+            </div>
+
+            <div class="form-group">
+                <label for="productPlantBased">
+                    <input type="checkbox" id="productPlantBased" name="plantBased" value="1">
+                    Plant Based
+                </label>
+                <input type="hidden" name="plantBased" value="0">
+            </div>
+
+            <!-- Botones de acción -->
+            <button type="submit" class="btn-submit">Guardar</button>
+            <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+        </form>
+    </div>
+</div>
+
+
 <script>
+
+    function openEditModal(button) {
+        var idItem = button.getAttribute('data-idItem');
+        var itemName = button.getAttribute('data-itemName');
+        var qty = button.getAttribute('data-qty');
+        var upc = button.getAttribute('data-upc');
+        var vegan = button.getAttribute('data-vegan') === '1';
+        var plantBased = button.getAttribute('data-plantBased') === '1';
+        var idUnit = button.getAttribute('data-idUnit');
+
+        document.getElementById('editProductModal').style.display = 'flex';
+        document.getElementById('productIdItem').value = idItem;
+        document.getElementById('productItemName').value = itemName;
+        document.getElementById('productQuantity').value = qty;
+        document.getElementById('productUpc').value = upc;
+        document.getElementById('productVegan').checked = vegan;
+        document.getElementById('productPlantBased').checked = plantBased;
+        document.getElementById('productIdUnit').value = idUnit;
+    }
+
+
+    // Función para cerrar el modal de edición
+    function closeEditModal() {
+        document.getElementById('editProductModal').style.display = 'none';
+    }
+
+
     // Función para abrir el modal
     function openAddModal() {
         document.getElementById('addProductModal').style.display = 'flex';
@@ -391,6 +527,24 @@
             })
             .catch(error => console.error("Error al cargar las unidades:", error));
     });
+
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/api/units/dropdown")
+            .then(response => response.json())
+            .then(units => {
+                const dropdown = document.getElementById("productIdUnit");
+                units.forEach(unit => {
+                    const option = document.createElement("option");
+                    option.value = unit.idUnit; // El valor será el ID de la unidad
+                    option.textContent = unit.unitName; // El texto será el nombre de la unidad
+                    dropdown.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error al cargar las unidades:", error));
+    });
 </script>
 </body>
+
 </html>

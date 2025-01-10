@@ -79,7 +79,7 @@ public class ProductController {
         product.setVegan(vegan); //Valor por defecto
         product.setPlantBased(plantBased); //Valor por defecto
         productService.createProduct(product);
-        return "redirect:/api/brands/" + idBrand + "/products?page=" + page;
+        return "redirect:/api/products/" + idBrand + "/products?page=" + page;
     }
 
     // Actualizar un producto
@@ -94,9 +94,10 @@ public class ProductController {
 
     // Eliminar un producto
     @DeleteMapping("/{idBrand}/products/{idItem}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Integer idBrand, @PathVariable String idItem) {
+    public String deleteProduct(@PathVariable Integer idBrand, @PathVariable String idItem) {
         productService.deleteProduct(idBrand, idItem);
-        return ResponseEntity.noContent().build();
+        //return ResponseEntity.noContent().build();
+        return "redirect:/api/brands/" + idBrand + "/products?page=0";
     }
 }
 

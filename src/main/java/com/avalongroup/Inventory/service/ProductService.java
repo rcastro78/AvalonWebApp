@@ -23,12 +23,12 @@ public class ProductService {
 
     // Obtener productos por idBrand con paginación
     public Page<Product> getProductsByBrand(Integer idBrand, PageRequest pageRequest) {
-        return productRepository.findByIdBrand(idBrand, pageRequest);
+        return productRepository.findByIdBrandAndStatus(idBrand, true, pageRequest);
     }
 
     // Obtener todos los productos de una marca
     public List<Product> getAllProductsByBrand(Integer idBrand) {
-        return productRepository.findByIdBrand(idBrand);
+        return productRepository.findByIdBrandAndStatus(idBrand,true);
     }
 
     // Obtener un producto por idBrand y idItem
@@ -57,11 +57,11 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    // Eliminar un producto
+    // Eliminar un producto (borrado lógico)
     public void deleteProduct(Integer idBrand, String idItem) {
         Product product = productRepository.findByIdBrandAndIdItem(idBrand, idItem)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
-
-        productRepository.delete(product);
+        product.setStatus(false);
+        productRepository.save(product);
     }
 }

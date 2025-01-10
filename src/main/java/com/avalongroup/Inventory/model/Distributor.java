@@ -20,6 +20,17 @@ public class Distributor {
         this.status = status;
     }
 
+    public Distributor(Integer idDistributor, String distributorName, String distributorEmail,
+                       String distributorPhone, String contact) {
+        this.idDistributor = idDistributor;
+        this.distributorName = distributorName;
+        this.distributorEmail = distributorEmail;
+        this.distributorPhone = distributorPhone;
+        this.contact = contact;
+    }
+
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idDistributor")
@@ -37,13 +48,13 @@ public class Distributor {
     @Column(name = "contact", length = 100)
     private String contact;
 
-    @Column(name = "createdAt", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
+    @Column(name = "createdAt", insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @Column(name = "updatedAt", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Column(name = "updatedAt",  insertable = false, updatable = false,columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    @Column(name = "status", columnDefinition = "TINYINT(1) DEFAULT 1")
+    @Column(name = "status",  insertable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean status;
 
     // Getters and Setters
