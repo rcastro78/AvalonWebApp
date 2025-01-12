@@ -1,6 +1,7 @@
 package com.avalongroup.Inventory.controller;
 
 import com.avalongroup.Inventory.model.Distributor;
+import com.avalongroup.Inventory.model.Unit;
 import com.avalongroup.Inventory.service.DistributorService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +39,14 @@ public class DistributorController {
     public List<Distributor> getAllDistributors() {
         return distributorService.getAllDistributors();
     }
+
+    @GetMapping("/dropdown")
+    @ResponseBody
+    public List<Distributor> getAllDistributorsForDropdown() {
+        return distributorService.getAllDistributors();
+    }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Distributor> getDistributorById(@PathVariable Integer id) {

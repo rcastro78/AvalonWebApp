@@ -29,6 +29,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
     // Buscar un producto por idBrand y idItem
     Optional<Product> findByIdBrandAndIdItem(Integer idBrand, String idItem);
 
+    Optional<Product> findByIdItem(String idItem);
+
+
     // Buscar productos por su UPC
     Optional<Product> findByUpc(String upc);
 

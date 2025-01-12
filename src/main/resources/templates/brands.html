@@ -6,7 +6,22 @@
     <title>Brands - Avalon Group</title>
     <link rel="stylesheet" href="/css/mantenimiento.css">
     <style>
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group input {
+            width: 100%;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+        }
+
         /* Estilos básicos para el modal */
+
         .modal {
             display: none;
             position: fixed;
@@ -26,6 +41,7 @@
             width: 400px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+
 
         .edit-btn-img {
             width: 48px;
@@ -107,6 +123,19 @@
 </head>
 <body>
 <div class="container">
+
+    <div class="navbar">
+        <a href="/menu">Main menu</a>
+        <a href="/reports">Reports</a>
+        <a href="/close">Sign out</a>
+    </div>
+
+    <!-- Texto centrado -->
+    <div class="header-text">
+        <h1>Avalon Group Line List System</h1>
+    </div>
+
+
     <h1>Brands - Avalon Group</h1>
 
     <!-- Botón para agregar una nueva marca -->
@@ -194,13 +223,14 @@
             <form th:action="@{/api/brands/update}" method="POST">
                 <input type="hidden" name="_method" value="PUT">
                 <input type="hidden" id="brandId" name="idBrand" value="">
-
+                <div class="form-group">
                 <label for="brandName">Brand Name</label>
                 <input type="text" id="brandName" name="brandName" required>
-                <br/>
+                </div>
+                <div class="form-group">
                 <label for="brandLogoUrl">Logo</label>
                 <input type="url" id="brandLogoUrl" name="brandLogoUrl" required>
-
+                </div>
                 <button type="submit" class="btn-submit">Save</button>
                 <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
             </form>
@@ -212,11 +242,16 @@
         <div class="modal-content">
             <h2>Add New Brand</h2>
             <form th:action="@{/api/brands/create}" method="POST">
-                <label for="newBrandName">Brand Name</label>
-                <input type="text" id="newBrandName" name="brandName" required>
-                <br/>
-                <label for="newBrandLogoUrl">Logo</label>
-                <input type="url" id="newBrandLogoUrl" name="brandLogoUrl" required>
+                <div class="form-group">
+                    <label for="newBrandName">Brand Name</label>
+                    <input type="text" id="newBrandName" name="brandName" required>
+
+                </div>
+                <div class="form-group">
+                    <label for="newBrandLogoUrl">Logo</label>
+                    <input type="url" id="newBrandLogoUrl" name="brandLogoUrl" required>
+
+                </div>
 
                 <button type="submit" class="btn-submit">Add</button>
                 <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>

@@ -5,6 +5,7 @@ import com.avalongroup.Inventory.repository.BrandRepository;
 import com.avalongroup.Inventory.repository.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,10 +32,23 @@ public class ProductService {
         return productRepository.findByIdBrandAndStatus(idBrand,true);
     }
 
+    public Page<Product> getAllProducts( PageRequest pageRequest) {
+        return productRepository.findAll(pageRequest);
+    }
+
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+
     // Obtener un producto por idBrand y idItem
     public Optional<Product> getProductById(Integer idBrand, String idItem) {
         return productRepository.findByIdBrandAndIdItem(idBrand, idItem);
     }
+
+    public Optional<Product> getProductByIdItem(String idItem) {
+        return productRepository.findByIdItem(idItem);
+    }
+
 
     // Crear un nuevo producto
     public Product createProduct(Product product) {

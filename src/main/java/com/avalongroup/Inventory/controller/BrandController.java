@@ -25,7 +25,7 @@ public class BrandController {
     @GetMapping
     public String getBrands(Model model, @RequestParam(defaultValue = "0") int page) {
         // Obtén las marcas con paginación
-        Page<Brand> brandPage = brandService.getBrands(PageRequest.of(page, 10));
+        Page<Brand> brandPage = brandService.getBrands(PageRequest.of(page, 5));
 
         model.addAttribute("brandPage", brandPage); // El objeto con paginación
         model.addAttribute("currentPage", page);     // Página actual

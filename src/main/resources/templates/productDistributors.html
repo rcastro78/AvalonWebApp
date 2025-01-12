@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribuidores del Producto</title>
+    <link rel="stylesheet" href="/css/mantenimiento.css">
+    <style>
+
+
+          /* Estilos básicos para el modal */
+          .modal {
+              display: none;
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background-color: rgba(0, 0, 0, 0.5);
+              justify-content: center;
+              align-items: center;
+          }
+
+          .modal-content {
+              background: white;
+              padding: 20px;
+              border-radius: 8px;
+              width: 400px;
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          }
+
+          .btn-submit {
+              background-color: #4CAF50;
+              color: white;
+              border: none;
+              padding: 10px 20px;
+              cursor: pointer;
+              margin-top: 10px;
+          }
+
+          .btn-cancel {
+              background-color: #f44336;
+              color: white;
+              border: none;
+              padding: 10px 20px;
+              cursor: pointer;
+              margin-top: 10px;
+          }
+
+          .btn-add {
+              background-color: #2196F3;
+              color: white;
+              border: none;
+              padding: 10px 20px;
+              cursor: pointer;
+              margin-bottom: 10px;
+          }
+
+          /* Estilos del formulario */
+          form {
+              display: flex;
+              flex-direction: column;
+              gap: 15px;
+          }
+
+          label {
+              font-size: 1em;
+              font-weight: bold;
+              margin-bottom: 5px;
+          }
+
+          input[type="text"], input[type="number"], input[type="checkbox"] {
+              padding: 10px;
+              font-size: 1em;
+              border: 1px solid #ccc;
+              border-radius: 5px;
+              width: 100%;
+              box-sizing: border-box;
+          }
+
+          .checkbox-label {
+              display: inline-block;
+              margin-left: 5px;
+          }
+
+          .modal-content {
+              max-width: 500px;
+              width: 90%;
+          }
+    </style>
+</head>
+<body>
+
+
+
+<div class="container">
+
+    <div class="navbar">
+        <a href="/menu">Main menu</a>
+        <a href="/api/distributors">Distributors</a>
+    </div>
+
+    <!-- Texto centrado -->
+    <div class="header-text">
+        Avalon Group Line List System
+    </div>
+
+
+    <h1>Product Distributors</h1>
+    <button class="btn-add" onclick="openAddNewDistribModal()">Add new distributor for this product</button>
+    <br/>
+
+    <!-- Detalle del producto -->
+    <div>
+        <p><strong>Product Code (MFG):</strong> <span th:text="${mfg}"></span></p>
+    </div>
+    <div>
+        <p><strong>Product Name:</strong> <span th:text="${product.itemName}"></span></p>
+    </div>
+    <div>
+        <a href="#" class="btn-add">Print report in PDF</a>
+    </div>
+    <br/>
+    <!-- Tabla de distribuidores -->
+    <table>
+        <thead>
+        <tr>
+            <th>Distributor Id</th>
+            <th>Distributor Name</th>
+            <th>Email</th>
+            <th>Brand</th>
+            <th>Unit</th>
+            <th>Quantity</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Iterar sobre la lista de distribuidores -->
+        <tr th:each="dist : ${distributor}">
+            <td th:text="${dist.idDistributor}"></td>
+            <td th:text="${dist.distributorName}"></td>
+            <td th:text="${dist.distributorEmail}"></td>
+            <td th:text="${dist.brandName}"></td>
+            <td th:text="${dist.unitName}"></td>
+            <td th:text="${dist.qty}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Botón para regresar -->
+    <button class="btn-back" onclick="goBack()">Back</button>
+</div>
+
+<!-- Modal para agregar un distribuidor -->
+<div id="addProductModal" class="modal">
+    <div class="modal-content">
+        <h2>Associate a new distributor for this product</h2>
+        <form id="distributorForm" method="POST" th:action="@{/api/item-distributors/create}">
+            <div class="form-group">
+                <label for="idItem">Product code</label>
+                <input type="text" id="idItem" name="idItem" th:value="${mfg}" readonly />
+            </div>
+
+            <div class="form-group">
+                <label for="productName">Product</label>
+                <input type="text" id="productName" name="productName" th:value="${product.itemName}" readonly />
+            </div>
+
+            <div class="form-group">
+                <label for="distributorItemCode">Distributor product code</label>
+                <input type="text" id="distributorItemCode" name="distributorItemCode" required />
+            </div>
+
+            <div class="form-group">
+                <label for="idDistributor">Distributed by</label>
+                <select id="idDistributor" name="idDistributor" required>
+                    <!-- Opciones del dropdown se cargarán aquí -->
+                </select>
+            </div>
+
+            <button type="submit" class="btn-submit">Submit</button>
+            <button type="button" class="btn-cancel" onclick="close2AddModal()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+
+    // Función para abrir el modal
+    function openAddNewDistribModal() {
+        document.getElementById('addProductModal').style.display = 'flex';
+
+    }
+
+    // Función para cerrar el modal
+    function closeAddModal() {
+        document.getElementById('addProductModal').style.display = 'none';
+
+    }
+
+    function close2AddModal() {
+        document.getElementById('addProductModal').style.display = 'none';
+
+    }
+
+    // Cargar los distribuidores en el dropdown al cargar la página
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/api/distributors/dropdown")
+            .then(response => response.json())
+            .then(distributors => {
+                const dropdown = document.getElementById("idDistributor");
+                distributors.forEach(distrib => {
+                    const option = document.createElement("option");
+                    option.value = distrib.idDistributor; // El valor será el ID de la unidad
+                    option.textContent = distrib.distributorName; // El texto será el nombre del distribuidor
+                    dropdown.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error al cargar los distribuidores:", error));
+    });
+
+
+</script>
+</body>
+</html>
+
+

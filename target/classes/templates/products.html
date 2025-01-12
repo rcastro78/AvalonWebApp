@@ -212,6 +212,18 @@
 </head>
 <body>
 <div class="container">
+
+    <div class="navbar">
+        <a href="/menu">Main menu</a>
+        <a href="javascript:history.back()">Back</a>
+        <a href="/close">Sign out</a>
+    </div>
+
+    <!-- Texto centrado -->
+    <div class="header-text">
+        <h1>Avalon Group Line List System</h1>
+    </div>
+
     <h1>Products for <span th:text="${param.brandName}"></span></h1>
     <div style="text-align: center;">
         <img th:src="@{${brand.brandLogoUrl}}" alt="Brand Logo" style="width: 240px; height: 240px; object-fit: contain;"/>
@@ -253,7 +265,8 @@
                 <img class="edit-btn-img"
                      th:src="@{/images/truck.png}"
                      alt="Distributors"
-                     onclick="" />
+                     th:data-id="${product.idItem}"
+                     onclick="redirectToDistributorsPage(this)" />
             </td>
 
             <td>
@@ -391,8 +404,8 @@
 <div id="editProductModal" class="modal">
     <div class="modal-content">
         <h2>Edit Product</h2>
-        <form th:action="@{/api/products/update}" method="POST">
-            <!-- Campo oculto para enviar el método PUT -->
+        <form th:action="@{/api/products/{idBrand}/products/update(idBrand=${brand.idBrand})}" method="post">
+        <!-- Campo oculto para enviar el método PUT -->
             <input type="hidden" name="_method" value="PUT">
             <!-- Campo oculto para almacenar el ID del producto -->
             <input type="hidden" id="productIdItem" name="idItem" value="">
@@ -400,13 +413,13 @@
             <!-- Nombre del producto -->
             <div class="form-group">
                 <label for="productItemName">Product Name</label>
-                <input type="text" id="productItemName" name="productItemName" required>
+                <input type="text" id="productItemName" name="itemName" required>
             </div>
 
             <!-- Cantidad -->
             <div class="form-group">
                 <label for="productQuantity">Quantity</label>
-                <input type="text" id="productQuantity" name="productQuantity" required>
+                <input type="text" id="productQuantity" name="qty" required>
             </div>
 
 
@@ -414,7 +427,7 @@
             <!-- Código UPC -->
             <div class="form-group">
                 <label for="productUpc">UPC</label>
-                <input type="text" id="productUpc" name="productUpc" required>
+                <input type="text" id="productUpc" name="upc" required>
             </div>
             <!--
                         <div class="form-group">
@@ -466,8 +479,8 @@
             </div>
 
             <!-- Botones de acción -->
-            <button type="submit" class="btn-submit">Guardar</button>
-            <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+            <button type="submit" class="btn-submit">Update</button>
+            <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
         </form>
     </div>
 </div>
@@ -544,7 +557,17 @@
             })
             .catch(error => console.error("Error al cargar las unidades:", error));
     });
+
+
+    function redirectToDistributorsPage(element) {
+        var idItem = element.getAttribute('data-id');
+        window.location.href = '/api/product-distributor-brands/product/' + idItem + '/distributors';
+    }
+
 </script>
+
+
+
 </body>
 
 </html>

@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="/css/mantenimiento.css">
     <style>
 
+        body, html {
+            margin: 0;
+            padding: 0;
+        }
+
+
         .form-group {
             display: flex;
             flex-direction: column;
@@ -117,11 +123,76 @@
         .pagination-container ul li.active a {
             background-color: #2e7d32;
         }
+
+    .sidebar {
+    width: 20%;
+    height: 100vh;
+    background-color: #4CAF50; /* Color verde */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar h2 {
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+.sidebar ul li {
+    width: 100%;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    display: block;
+    padding: 10px;
+    transition: background-color 0.3s;
+}
+
+.sidebar ul li a:hover {
+    background-color: #2e7d32; /* Un verde más oscuro */
+}
+
+.container {
+    flex: 1;
+    width:80%;
+    padding: 20px;
+}
+
     </style>
 </head>
 <body>
+
+
+
+
 <div class="container">
-    <h1>Distributors - Avalon Group</h1>
+
+    <div class="navbar">
+        <a href="/menu">Main menu</a>
+        <a href="/reports">Reports</a>
+        <a href="/close">Sign out</a>
+    </div>
+
+    <!-- Texto centrado -->
+    <div class="header-text">
+        <h1>Avalon Group Line List System</h1>
+    </div>
+
+
+    <h1>Distributors</h1>
 
     <!-- Botón para agregar un nuevo distribuidor -->
     <button class="btn-add" onclick="openAddModal()">Add New Distributor</button>
@@ -150,7 +221,9 @@
                 <img class="edit-btn-img"
                      th:src="@{/images/food.png}"
                      alt="Logical delete (status=0)"
-                     onclick="" />
+                     th:data-id="${distributor.idDistributor}"
+                     onclick="redirectToProductsPage(this)"
+                />
             </td>
 
             <td>
@@ -177,6 +250,7 @@
                     <button type="submit" class="delete-btn">
                         <img class="edit-btn-img"
                              th:src="@{/images/thrash.png}"
+
                              alt="Logical delete (status=0)" />
                     </button>
                 </form>
@@ -305,6 +379,12 @@
     function closeAddModal() {
         document.getElementById('addModal').style.display = 'none';
     }
+
+    function redirectToProductsPage(element) {
+        var idDistributor = element.getAttribute('data-id');
+        window.location.href = '/api/product-distributor-brands/distributor/' + idDistributor + '/products';
+    }
+
 
 </script>
 </body>

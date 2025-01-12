@@ -24,6 +24,8 @@ public interface DistributorRepository extends JpaRepository<Distributor, Intege
     // Buscar un distribuidor por correo electrónico
     Optional<Distributor> findByDistributorEmail(String distributorEmail);
 
+    Optional<Distributor> findByIdDistributor(int idDistributor);
+
     // Buscar distribuidores por número de teléfono
     List<Distributor> findByDistributorPhone(String distributorPhone);
 

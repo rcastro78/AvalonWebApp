@@ -37,7 +37,7 @@ public class ProductController {
     public String getProductsByBrand(Model model, @PathVariable Integer idBrand,
                                      @RequestParam(defaultValue = "0") int page) throws Exception {
         // Obtener los productos de una marca con paginación
-        Page<Product> productPage = productService.getProductsByBrand(idBrand, PageRequest.of(page, 10));
+        Page<Product> productPage = productService.getProductsByBrand(idBrand, PageRequest.of(page, 5));
 
         Optional<Brand> brandOptional = brandService.getBrandById(idBrand);
         // Desempaquetar el Optional
@@ -51,6 +51,21 @@ public class ProductController {
 
         return "products";  // Nombre de la vista Thymeleaf
     }
+
+
+    @GetMapping("/all")
+    public String getProducts(Model model,
+                              @RequestParam(defaultValue = "0") int page) throws Exception {
+        // Obtener los productos de una marca con paginación
+        Page<Product> productPage = productService.getAllProducts(PageRequest.of(page, 5));
+
+        model.addAttribute("productPage", productPage);  // Objeto con paginación
+        model.addAttribute("currentPage", page);          // Página actual
+        model.addAttribute("totalPages", productPage.getTotalPages()); // Total de páginas
+
+        return "productsAll";  // Nombre de la vista Thymeleaf
+    }
+
 
     // Obtener todos los productos por idBrand
     @GetMapping("/{idBrand}/products/all")
@@ -74,6 +89,7 @@ public class ProductController {
                                 @RequestParam(defaultValue = "0") Integer vegan,
                                 @RequestParam(defaultValue = "0") Integer plantBased,
                                 Model model) {
+
         model.addAttribute("units",unitService.getAllUnits());
         product.setIdBrand(idBrand); // Asocia la marca al producto
         product.setVegan(vegan); //Valor por defecto
@@ -88,8 +104,9 @@ public class ProductController {
                                 @RequestParam("itemName") String itemName,
                                 @RequestParam("upc") String upc,
                                 @RequestParam(defaultValue = "0") int page) {
-        Product updatedProduct = productService.updateProduct(idBrand, idItem, itemName, upc);
-        return "redirect:/api/brands/" + idBrand + "/products?page=" + page;
+
+        productService.updateProduct(idBrand, idItem, itemName, upc);
+        return "redirect:/api/products/" + idBrand + "/products?page=" + page;
     }
 
     // Eliminar un producto
