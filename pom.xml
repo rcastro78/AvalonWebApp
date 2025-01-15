@@ -64,6 +64,28 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>7.0.1</version> <!-- Usa la última versión estable -->
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-pdf</artifactId>
+			<version>7.0.1</version> <!-- Make sure this version matches your JasperReports version -->
+		</dependency>
+
+		<!-- Para exportar a PDF -->
+
+
+		<!-- BeanUtils (a veces requerido por JasperReports) -->
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.4</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

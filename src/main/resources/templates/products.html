@@ -217,6 +217,7 @@
         <a href="/menu">Main menu</a>
         <a href="javascript:history.back()">Back</a>
         <a href="/close">Sign out</a>
+        <a th:href="@{/generateReport(idDist=${brand.idBrand})}">Print report in PDF</a>
     </div>
 
     <!-- Texto centrado -->
@@ -228,9 +229,11 @@
     <div style="text-align: center;">
         <img th:src="@{${brand.brandLogoUrl}}" alt="Brand Logo" style="width: 240px; height: 240px; object-fit: contain;"/>
     </div>
+    <br/>
     <div>
         <a th:href="@{/api/brands}" class="btn-back">Back to Brands</a>
     </div>
+    <br/>
     <!-- Botón para agregar un nuevo producto -->
     <button class="btn-add" onclick="openAddModal()">Add New Product</button>
 
