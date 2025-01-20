@@ -68,13 +68,14 @@ public class DistributorController {
                                     @RequestParam("distributorEmail") String distributorEmail,
                                     @RequestParam("distributorPhone") String distributorPhone,
                                     @RequestParam("contact") String contact,
+                                    @RequestParam("distributorLogoUrl") String distributorLogoUrl,
                                     @RequestParam(defaultValue = "0") int page) {
 
 
 
         // Llamada al servicio para actualizar el distribuidor
         Distributor updatedDistributor = new Distributor(id, distributorName, distributorEmail, distributorPhone, contact,
-                false);
+                distributorLogoUrl, false);
         distributorService.updateDistributor(id, updatedDistributor);
 
         // Redirigir a la misma página para cargar los distribuidores actualizados
@@ -88,6 +89,7 @@ public class DistributorController {
                                     @RequestParam("distributorEmail") String distributorEmail,
                                     @RequestParam("distributorPhone") String distributorPhone,
                                     @RequestParam("contact") String contact,
+                                    @RequestParam("distributorLogoUrl") String distributorLogoUrl,
                                     @RequestParam(defaultValue = "0") int page) {
 
 
@@ -95,8 +97,8 @@ public class DistributorController {
         boolean existingStatus = existingDistributor.get().getStatus();
 
         // Llamada al servicio para actualizar el distribuidor
-        Distributor updatedDistributor = new Distributor(id, distributorName, distributorEmail, distributorPhone, contact,
-                existingStatus);
+        Distributor updatedDistributor = new Distributor(id, distributorName, distributorEmail,
+                distributorPhone, contact,distributorLogoUrl, existingStatus);
         distributorService.updateDistributor(id, updatedDistributor);
 
         // Redirigir a la misma página para cargar los distribuidores actualizados

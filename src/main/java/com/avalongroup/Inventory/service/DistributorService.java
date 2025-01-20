@@ -46,6 +46,7 @@ public class DistributorService {
         distributor.setDistributorPhone(distributorDetails.getDistributorPhone());
         distributor.setContact(distributorDetails.getContact());
         distributor.setStatus(distributorDetails.getStatus());
+        distributor.setDistributorLogoUrl(distributor.getDistributorLogoUrl());
 
         return distributorRepository.save(distributor);
     }

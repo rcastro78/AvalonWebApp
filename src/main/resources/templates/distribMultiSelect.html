@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selección de Distribuidores</title>
+    <style>
+        .distributor-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .distributor {
+            text-decoration: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+        }
+
+        .distributor:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Colores de distribuidores */
+        .distributor-1 { background-color: #3498db; } /* Azul brillante */
+        .distributor-2 { background-color: #2ecc71; } /* Verde esmeralda */
+        .distributor-3 { background-color: #e74c3c; } /* Rojo coral */
+        .distributor-4 { background-color: #f39c12; } /* Naranja */
+        .distributor-5 { background-color: #9b59b6; } /* Púrpura */
+        .distributor-6 { background-color: #1abc9c; } /* Turquesa */
+        .distributor-7 { background-color: #34495e; } /* Azul marino */
+        .distributor-8 { background-color: #d35400; } /* Naranja oscuro */
+        .distributor-9 { background-color: #2980b9; } /* Azul océano */
+        .distributor-10 { background-color: #8e44ad; } /* Morado */
+
+        /* Tamaños de distribuidores */
+        .distributor-small { font-size: 0.7rem; }
+        .distributor-medium { font-size: 0.9rem; }
+        .distributor-large { font-size: 1.1rem; }
+        .distributor-xlarge { font-size: 1.3rem; }
+
+        /* Estilo para distribuidores seleccionados */
+        .selected {
+            background-color: #555555 !important;
+        }
+    </style>
+</head>
+<body>
+<div class="distributor-cloud">
+    <div class="distributor distributor-small distributor-1">Distribuidor A</div>
+    <div class="distributor distributor-medium distributor-2">Distribuidor B</div>
+    <div class="distributor distributor-large distributor-3">Distribuidor C</div>
+    <div class="distributor distributor-xlarge distributor-4">Distribuidor D</div>
+    <div class="distributor distributor-medium distributor-5">Distribuidor E</div>
+    <div class="distributor distributor-small distributor-6">Distribuidor F</div>
+    <div class="distributor distributor-large distributor-7">Distribuidor G</div>
+    <div class="distributor distributor-medium distributor-8">Distribuidor H</div>
+    <div class="distributor distributor-small distributor-9">Distribuidor I</div>
+    <div class="distributor distributor-xlarge distributor-10">Distribuidor J</div>
+</div>
+
+<script>
+    document.querySelectorAll('.distributor').forEach(function(distributor) {
+        distributor.addEventListener('click', function() {
+            this.classList.toggle('selected');
+        });
+    });
+</script>
+</body>
+</html>

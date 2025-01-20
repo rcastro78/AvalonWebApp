@@ -172,7 +172,7 @@
 
             <td>
 
-                <a th:href="${brand.brandName.contains('WHOLESOME') ? '/wholesomeReport?idDist=' + brand.idBrand : '/generateReport?idDist=' + brand.idBrand}">
+                <a th:href="@{/generateReport(idDist=${brand.idBrand})}">
                     <img th:src="@{/images/pdf.png}" alt="Imprimir reporte en PDF" style="width: 48px; height: 48px; vertical-align: middle; margin-right: 5px;">
                 </a>
                <!-- <a th:href="@{/generateReport(idDist=${brand.idBrand})}">

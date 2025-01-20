@@ -202,10 +202,11 @@
         <tr>
             <th>ID</th>
             <th>Distributor Name</th>
+            <th>Logo</th>
             <th>Contact Info</th>
             <th>Email</th>
             <th>Phone</th>
-            <th colspan="3">Actions</th>
+            <th colspan="4">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -213,6 +214,9 @@
         <tr th:each="distributor : ${distributorPage.content}">
             <td th:text="${distributor.idDistributor}"></td>
             <td th:text="${distributor.distributorName}"></td>
+            <td>
+                <img th:src="@{${distributor.distributorLogoUrl}}" alt="Logo de [[${distributor.distributorName}]]" width="50" height="50">
+            </td>
             <td th:text="${distributor.contact}"></td>
             <td th:text="${distributor.distributorEmail}"></td>
             <td th:text="${distributor.distributorPhone}"></td>
@@ -224,6 +228,12 @@
                      th:data-id="${distributor.idDistributor}"
                      onclick="redirectToProductsPage(this)"
                 />
+            </td>
+
+            <td>
+                <a th:href="@{/generateReportDistributor(idDist=${distributor.idDistributor})}">
+                    <img th:src="@{/images/pdf.png}" alt="Imprimir reporte en PDF" style="width: 48px; height: 48px; vertical-align: middle; margin-right: 5px;">
+                </a>
             </td>
 
             <td>
@@ -389,3 +399,5 @@
 </script>
 </body>
 </html>
+
+

@@ -58,7 +58,7 @@ import java.util.Map;
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_PDF)
                     .contentLength(pdfBytes.length)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report.pdf")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=report.pdf")
                     .body(pdfBytes);
         }
 
@@ -99,5 +99,45 @@ import java.util.Map;
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report.pdf")
                     .body(pdfBytes);
         }
+
+        @GetMapping("/generateReportDistributor")
+        public ResponseEntity<byte[]> generateReportDistributor(@RequestParam String idDist) throws Exception {
+            // Ruta del archivo .jasper (archivo compilado)
+            String jasperPath = "reports/rptDistributorBrands.jasper"; // Cambia esto a la ruta de tu archivo .jasper
+
+            // Cargar el archivo .jasper desde el classpath
+            ClassPathResource resource = new ClassPathResource(jasperPath);
+            InputStream jasperInputStream = resource.getInputStream();
+
+            // Cargar el reporte compilado (.jasper)
+            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(jasperInputStream);
+
+            // Configurar parámetros
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("idDistributor", idDist); // Pasar el parámetro dinámico
+
+            // Llenar el reporte con los datos y parámetros
+            JasperPrint jasperPrint = JasperFillManager.fillReport(
+                    jasperReport,
+                    parameters,
+                    dataSource.getConnection()
+            );
+
+            // Exportar el reporte a PDF usando ByteArrayOutputStream
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            JasperExportManager.exportReportToPdfStream(jasperPrint, byteArrayOutputStream);
+
+            // Obtener los bytes del archivo PDF generado
+            byte[] pdfBytes = byteArrayOutputStream.toByteArray();
+
+            // Devolver el archivo PDF como una respuesta HTTP con los encabezados adecuados
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .contentLength(pdfBytes.length)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=report.pdf")
+                    .body(pdfBytes);
+        }
+
+
 
     }

@@ -11,13 +11,14 @@ public class Distributor {
     }
 
     public Distributor(Integer idDistributor, String distributorName, String distributorEmail,
-                       String distributorPhone, String contact, Boolean status) {
+                       String distributorPhone, String contact, String distributorLogoUrl, Boolean status) {
         this.idDistributor = idDistributor;
         this.distributorName = distributorName;
         this.distributorEmail = distributorEmail;
         this.distributorPhone = distributorPhone;
         this.contact = contact;
         this.status = status;
+        this.distributorLogoUrl = distributorLogoUrl;
     }
 
     public Distributor(Integer idDistributor, String distributorName, String distributorEmail,
@@ -56,6 +57,11 @@ public class Distributor {
 
     @Column(name = "status",  insertable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean status;
+
+
+
+    @Column(nullable = false, length = 100)
+    private String distributorLogoUrl;
 
     // Getters and Setters
 
@@ -121,5 +127,13 @@ public class Distributor {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public String getDistributorLogoUrl() {
+        return distributorLogoUrl;
+    }
+
+    public void setDistributorLogoUrl(String distributorLogoUrl) {
+        this.distributorLogoUrl = distributorLogoUrl;
     }
 }
